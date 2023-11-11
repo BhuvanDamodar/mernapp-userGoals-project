@@ -1,24 +1,44 @@
-const getAllGoals = (req, res)=>{
-console.log(req.body)
-res.status(200).json({
-    message: "Goal api"
-})}
+const asyncHandler = require("express-async-handler")
+const goalModel = require("../models/GoalModel")
 
-const createGoal = (req, res)=>{
+const getAllGoals = asyncHandler(async(req, res)=>{
+const goals = await goalModel.find()
+res.status(200).json(goals)
+})
+
+const createGoal = asyncHandler(async(req, res)=>{
     if(!req.body.text){
         res.status(400)
         throw new Error('Please add a text field')
         
     }
-    res.status(201).json({
-    message: "Goal create api"
-})}
-const updateGoal = (req, res)=>res.status(200).json({
-    message: "Goal update api"
+    const goal = await goalModel.create({
+        text: req.body.text
+    })
+    res.status(201).json(goal)
 })
-const deleteGoal = (req, res)=>res.status(200).json({
-    message: "Goal delete api",
-    id : req.params.id
+
+const updateGoal = asyncHandler(async(req, res)=>{
+    try{
+    const updatedGoal = await goalModel.findByIdAndUpdate(req.params.id, req.body,{new: true})
+    res.status(200).json(updatedGoal)
+    } 
+    catch(error){
+        res.status(400)
+        throw new Error('Invalid Id')
+    }
+})
+
+const deleteGoal = asyncHandler(async(req, res)=>{
+    try{
+    await goalModel.deleteOne({_id:req.params.id})
+    res.status(200).json({
+        message: `Goal with id:${req.params.id} deleted successfully`
+    })
+    } catch(error){
+        res.status(404)
+        throw new Error(`Goal with id:${req.params.id} not found`)
+    }
 })
 
 
