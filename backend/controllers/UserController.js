@@ -2,6 +2,7 @@ const UserModel = require("../models/UserModel")
 const asyncHandler = require("express-async-handler")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const { protect } = require("../middleware/authMiddleware")
 
 // @access public
 const registerUser = asyncHandler(async (req, res) => {
@@ -74,8 +75,13 @@ const userLogin = asyncHandler(async (req, res) => {
 })
 
 //access private
-const getUser = asyncHandler(async (req, res) => {
-
+const getUser = asyncHandler(async (req, res,) => {
+    const { _id, name, email} = await UserModel.findById(req.user.id)
+    res.status(200).json({
+        id: _id,
+        name,
+        email
+    })
 })
 
 //Generate JWT token
