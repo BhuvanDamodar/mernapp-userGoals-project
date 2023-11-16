@@ -37,13 +37,13 @@ const registerUser = asyncHandler(async (req, res) => {
             _id: user.id,
             name: user.name,
             email: user.email,
-            token: generateToken(user.id)
+            token: generateToken(user._id)
         })
     } else {
         res.status(400)
         throw new Error('User not created')
     }
-
+    
 })
 
 const userLogin = asyncHandler(async (req, res) => {
@@ -66,7 +66,7 @@ const userLogin = asyncHandler(async (req, res) => {
             _id: userExists.id,
             name: userExists.name,
             email: userExists.email,
-            token: generateToken(userExists.id)
+            token: generateToken(userExists._id)
         })
     } else {
         res.status(400)
